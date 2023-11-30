@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  karaf:
+    image: apache/karaf:4.3.7
+    container_name: karaf
+    expose:
+      - "1099"
+      - "44444"
+      - "8101"
+      - "8181"
+    ports:
+      - "8101:8101"
+      - "1099:1099"
+      - "44444:44444"
+      - "8181:8181"
+
+    volumes:
+      - ./data/data:/opt/apache-karaf/data
+      - ./data/deploy:/opt/apache-karaf/deploy
+      - ./data/conf/users.properties:/opt/apache-karaf/etc/users.properties
+ 
+    command: karaf
+    stdin_open: true
+    tty: true
