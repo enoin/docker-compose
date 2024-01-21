@@ -16,9 +16,11 @@ services:
       - "8181:8181"
 
     volumes:
-      - ./data/data:/opt/apache-karaf/data
-      - ./data/deploy:/opt/apache-karaf/deploy
-      - ./data/conf/users.properties:/opt/apache-karaf/etc/users.properties
+      - ./data/karaf/data:/opt/apache-karaf/data
+      - ./data/karaf/deploy:/opt/apache-karaf/deploy
+      - ./conf/karaf/users.properties:/opt/apache-karaf/etc/users.properties
+      - ./conf/karaf/org.apache.karaf.features.cfg:/opt/apache-karaf/etc/org.apache.karaf.features.cfg
+
  
     command: karaf
     stdin_open: true
