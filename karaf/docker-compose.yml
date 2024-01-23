@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+
+  active_mq:
+    image: apache/activemq-artemis:2.31.2
+    container_name: activemq-artemis
+    environment:
+      - ARTEMIS_USER=user
+      - ARTEMIS_PASSWORD=pass
+    ports:
+      - "61616:61616" 
+      - "8161:8161"
+    volumes:
+      - ./data/active_mq:/var/lib/artemis-instance
+
   karaf:
     image: apache/karaf:4.3.7
     container_name: karaf
@@ -14,12 +27,24 @@ services:
       - "1099:1099"
       - "44444:44444"
       - "8181:8181"
+    depends_on:
+      - active_mq
+    links:
+      - "active_mq:amq"
+    environment:
+      - EXTRA_JAVA_OPTS=-Xmx512M
+      - KARAF_DEBUG=true
+      - JAVA_DEBUG_PORT=*:5005
+      # - JAVA_DEBUG_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false
+
 
     volumes:
       - ./data/karaf/data:/opt/apache-karaf/data
       - ./data/karaf/deploy:/opt/apache-karaf/deploy
       - ./conf/karaf/users.properties:/opt/apache-karaf/etc/users.properties
       - ./conf/karaf/org.apache.karaf.features.cfg:/opt/apache-karaf/etc/org.apache.karaf.features.cfg
+      - ./conf/karaf/org.apache.karaf.management.cfg:/opt/apache-karaf/etc/org.apache.karaf.management.cfg
+      - ./conf/karaf/config.properties:/opt/apache-karaf/etc/config.properties
 
  
     command: karaf
