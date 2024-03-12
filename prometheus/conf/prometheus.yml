@@ -1,0 +1,18 @@
+
+global:
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  evaluation_interval: 15s
+  external_labels:
+    jp1_pc_prome_hostname: "Monitoring agent host name"
+  
+
+scrape_configs:
+  - job_name: "jvm-metrics"
+    honor_timestamps: true
+    metrics_path: /metrics
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    scheme: http
+    static_configs:
+      - targets: ["192.168.1.241:8181"]

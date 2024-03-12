@@ -2,17 +2,17 @@ version: "3"
 
 services:
 
-  active_mq:
-    image: apache/activemq-artemis:2.31.2
-    container_name: activemq-artemis
-    environment:
-      - ARTEMIS_USER=user
-      - ARTEMIS_PASSWORD=pass
-    ports:
-      - "61616:61616" 
-      - "8161:8161"
-    volumes:
-      - ./data/active_mq:/var/lib/artemis-instance
+  # active_mq:
+  #   image: apache/activemq-artemis:2.31.2
+  #   container_name: activemq-artemis
+  #   environment:
+  #     - ARTEMIS_USER=user
+  #     - ARTEMIS_PASSWORD=pass
+  #   ports:
+  #     - "61616:61616" 
+  #     - "8161:8161"
+  #   volumes:
+  #     - ./data/active_mq:/var/lib/artemis-instance
 
   karaf:
     image: apache/karaf:4.3.7
@@ -27,10 +27,11 @@ services:
       - "1099:1099"
       - "44444:44444"
       - "8181:8181"
-    depends_on:
-      - active_mq
-    links:
-      - "active_mq:amq"
+      - "5005:5005"
+    # depends_on:
+      # - active_mq
+    # links:
+      # - "active_mq:amq"
     environment:
       - EXTRA_JAVA_OPTS=-Xmx512M
       - KARAF_DEBUG=true
@@ -45,8 +46,11 @@ services:
       - ./conf/karaf/org.apache.karaf.features.cfg:/opt/apache-karaf/etc/org.apache.karaf.features.cfg
       - ./conf/karaf/org.apache.karaf.management.cfg:/opt/apache-karaf/etc/org.apache.karaf.management.cfg
       - ./conf/karaf/config.properties:/opt/apache-karaf/etc/config.properties
+      - ./conf/karaf/org.ops4j.pax.url.mvn.cfg:/opt/apache-karaf/org.ops4j.pax.url.mvn.cfg
+      - ~/.m2/:/opt/apache-karaf/host-local-repository
 
- 
+
     command: karaf
     stdin_open: true
     tty: true
+

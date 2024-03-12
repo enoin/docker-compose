@@ -10,7 +10,10 @@ services:
             - "9443:9443"
         environment:
             - LICENSE=accept
-            - MQ_APP_PASSWORD=passw0rd            
+            - MQ_APP_PASSWORD=123qweasd
+            - MQ_ADMIN_PASSWORD=123qweasd
+            - MQ_QMGR_NAME=QM1
+            - MQ_ENABLE_METRICS=true
         volumes:
             - qm1data:/mnt/mqm
             
@@ -21,3 +24,19 @@ volumes:
 # visit console -> https://localhost:9443/ibmmq/console/login.html
 # admin/passw0rd
 
+# runmqsc -
+
+
+# crtmqm QM_APPLE && strmqm QM_APPLE
+
+
+# runmqsc QM_APPLE < file
+# runmqsc QM_APPLE < /dev/stdin <<< "DEFINE QLOCAL('TEST2.QUEUE.22') REPLACE"
+
+
+# DEFINE QLOCAL('TEST2.QUEUE.3') REPLACE
+# SET AUTHREC +
+#    PROFILE('TEST2.QUEUE.3') +
+#    PRINCIPAL('app') +
+#    OBJTYPE(QUEUE) +
+#    AUTHADD(BROWSE,CHG,CLR,DLT,DSP,GET,INQ,PUT,PASSALL,PASSID,SET,SETALL,SETID)

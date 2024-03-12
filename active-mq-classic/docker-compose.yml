@@ -1,0 +1,38 @@
+services:
+  active_mq_classic:
+    image: apache/activemq-classic:6.0.0
+    container_name: "amq-classic"
+    environment:
+      - ACTIVEMQ_JMX_USER=admin
+      - ACTIVEMQ_JMX_PASSWORD=admin
+      - ACTIVEMQ_CONNECTION_USER=admin
+      - ACTIVEMQ_CONNECTION_PASSWORD=admin
+      - ACTIVEMQ_WEB_USER=admin
+      - ACTIVEMQ_WEB_PASSWORD=admin
+
+    expose:
+      - "61616"
+      - "5672"
+      - "61613"
+      - "1883"
+      - "61614"
+      - "8161"
+      - "1099"
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "5672:5672"
+      - "61613:61613"
+      - "1883:1883"
+      - "61614:61614"
+      - "1099:1099"
+
+    volumes:
+      - active_mq_classicdata:/opt/apache-activemq/conf
+
+    command: activemq console
+    stdin_open: true
+    tty: true
+
+volumes:
+  active_mq_classicdata:
