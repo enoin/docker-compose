@@ -1,0 +1,34 @@
+docker exec -it elastic bin/elasticsearch-service-tokens create elastic/kibana kibana
+
+copy token to 
+
+kibana:
+  image: docker.elastic.co/kibana/kibana
+  ports:
+    - "5601:5601"
+  environment:
+    - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    - ELASTICSEARCH_SERVICEACCOUNTTOKEN=eyJ2ZX...YourTokenHere
+    - xpack.encryptedSavedObjects.encryptionKey=your32CharacterLongEncryptionKey
+
+
+
+---
+
+
+curl -u elastic:yourpassword -X POST "http://localhost:9200/_security/api_key" -H 'Content-Type: application/json' -d'
+{
+  "name": "metricbeat-with-ilm",
+  "role_descriptors": {
+    "metricbeat_role": {
+      "cluster": ["monitor", "manage_ilm", "read_ilm"],
+      "index": [
+        {
+          "names": ["metricbeat-*"],
+          "privileges": ["write", "create", "create_index"]
+        }
+      ]
+    }
+  }
+}'
+

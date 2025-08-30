@@ -1,0 +1,47 @@
+version: '3.5'
+services:
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - '8086:8086'
+    networks:
+      - perftests
+    environment:
+      - INFLUXDB_DB='k6'
+      - INFLUXDB_DATA_MAX_SERIES_PER_DATABASE=0
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000'
+    networks:
+      - perftests
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    env_file:
+      - gf-env.properties
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ${PWD}/grafana-provisioning/:/etc/grafana/provisioning:ro
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.grafana.rule: 'PathPrefix(`/grafana`)'
+      traefik.http.routers.grafana.service: 'grafana'
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+
+volumes:
+  influxdb_data:
+    external: true
+    name: ptmam_influxdb_data
+  grafana_data:
+    external: true
+    name: ptmam_grafana_data
+
+networks:
+  perftests:
+    name: perftests
+    external: true

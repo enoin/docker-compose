@@ -1,0 +1,20 @@
+services:
+    bmt-app-db-dev:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: bmt-app-db-dev
+        volumes:
+            - ./init/entrypoint.sh:/init/entrypoint.sh
+            - ./init/init.sh:/init/init.sh
+            - ./init/init_db.sql:/init/init_db.sql
+            - ./init/init_user.sql:/init/init_user.sql
+        entrypoint: /init/entrypoint.sh
+        environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=${DB_APP_MSSQL_SA_PASSWORD}
+            - APP_USER=${DB_APP_USERNAME}
+            - APP_PASSWORD=${DB_APP_PASSWORD}
+            - TZ=Europe/Budapest
+            - PATH=$PATH:/opt/mssql-tools18/bin/:/usr/bin/
+            - DB_NAME=bmt
+        ports:
+            - 1433:1433

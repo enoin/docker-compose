@@ -1,0 +1,18 @@
+services:
+  cache:
+    image: redis:8.2.1-alpine3.22
+    ports:
+      - '6379:6379'
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ajsdcnkj2342sd
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"ajsdcnkj2342sd\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    
+    volumes: 
+      - ./data:/data

@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-JVM
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: jvm
+    isDefault: true
+  - name: InfluxDB-K6
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: k6
+    isDefault: false

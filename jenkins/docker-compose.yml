@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: jenkins-docker:latest
+    image: jenkins/jenkins:lts
+    container_name: jenkins-dockerized
+    privileged: true
+    user: root
+
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./data/jenkins_home:/var/jenkins_home
+      - ./data/jenkins_data:/var/jenkins_data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false

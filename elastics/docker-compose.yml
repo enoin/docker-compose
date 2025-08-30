@@ -1,0 +1,36 @@
+services:
+  elasticsearch:
+    image: elasticsearch:9.0.1
+    ports:
+      - 9200:9200
+    environment:
+      discovery.type: 'single-node'
+      xpack.security.enabled: 'true'
+      xpack.security.authc.api_key.enabled: true
+      ELASTIC_PASSWORD: 'ssda'
+      ES_JAVA_OPTS: '-Xmx2g -Xms2g'
+  kibana:
+    image: kibana:9.0.1
+    environment:
+      - xpack.encryptedSavedObjects.encryptionKey=somelong32charactersecretkey!
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_PUBLICBASEURL=http://localhost:5601
+      - xpack.security.enabled=true
+      - xpack.encryptedSavedObjects.encryptionKey=0123456789abcdef0123456789abcdef
+      - SERVER_SSL_ENABLED=false
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYTpKSmFPME1sX1NIU0VMUTB3WlQ5QTN3
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:9.0.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+    environment:
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
