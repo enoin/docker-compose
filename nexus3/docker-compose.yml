@@ -1,0 +1,10 @@
+services:
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: nexus
+    restart: unless-stopped
+    ports:
+      - "8081:8081"   # Nexus web UI
+      - "8082:8082"   # (optional) raw repo, or npm repo if separate
+    volumes:
+      - ./data:/nexus-data
