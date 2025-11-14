@@ -1,0 +1,14 @@
+services:
+  mc:
+    image: minio/mc:latest
+    environment:
+      MC_ALIAS_ENDPOINT: ${MINIO_ENDPOINT}
+      MC_ALIAS_USER: ${MINIO_ROOT_USER}
+      MC_ALIAS_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    entrypoint: >
+      /bin/sh -c "
+      echo connect to: $${MC_ALIAS_ENDPOINT} &&
+      sleep 2 &&
+      mc alias set local $${MC_ALIAS_ENDPOINT} $${MC_ALIAS_USER} $${MC_ALIAS_PASSWORD} &&
+      tail -f /dev/null
+      "
