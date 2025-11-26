@@ -1,0 +1,8 @@
+services:
+  duckdb:
+    image: duckdb/duckdb:latest
+    tty: true    
+    stdin_open: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
