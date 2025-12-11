@@ -5,6 +5,8 @@ RUN apt update -y
 RUN apt install -y \
     git \
     file \
+    lldb \
+    gdbserver \
     build-essential \
     libasound2-dev \
     libcups2-dev \
