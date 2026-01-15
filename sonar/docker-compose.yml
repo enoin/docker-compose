@@ -1,5 +1,6 @@
 services:
   sonarqube:
+    #user: "${UID}:${GID}"
     image: sonarqube:latest
     depends_on:
       - db
@@ -28,7 +29,7 @@ services:
       - ./data/postgresql:/var/lib/postgresql
       - ./data/postgresql_data:/var/lib/postgresql/data
 
-# kmsdDasc_34asSer
 # sudo chown 1000:1000 ./data/
 # admin/admin
+# kmsdDasc_34asSer
 
