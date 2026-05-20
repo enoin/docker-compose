@@ -1,0 +1,19 @@
+services:
+  app-librefs:
+    image: ghcr.io/librefs/librefs:latest
+    container_name: chilitime-s3-librefs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - ./data/object-storage:/data
+    command: server /data --console-address :9001
