@@ -1,0 +1,31 @@
+services:
+  mysql-backup:
+    image: alpine:3.19
+    container_name: mysql-backup
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: your-mysql-host
+      MYSQL_PORT: 3306
+      MYSQL_USER: backup_user
+      MYSQL_PASSWORD: backup_password
+      MYSQL_DATABASE: your_database
+      SCP_USER: remote_user
+      SCP_HOST: remote-vm-ip
+      SCP_PORT: 22
+      SCP_TARGET_DIR: /backups
+      BACKUP_CRON: "0 2 * * *" # every day at 02:00
+      RETAIN_DAYS: 7
+    volumes:
+      - ./backup.sh:/backup.sh:ro
+      - ./ssh:/root/.ssh:ro # mount your private key here
+      - backup_tmp:/tmp/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apk add --no-cache mysql-client openssh-client dcron && \
+        chmod +x /backup.sh && \
+        echo "$$BACKUP_CRON /backup.sh >> /var/log/backup.log 2>&1" | crontab - && \
+        crond -f -l 2
+
+volumes:
+  backup_tmp:
