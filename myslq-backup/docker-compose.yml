@@ -4,28 +4,30 @@ services:
     container_name: mysql-backup
     restart: unless-stopped
     environment:
-      MYSQL_HOST: your-mysql-host
-      MYSQL_PORT: 3306
-      MYSQL_USER: backup_user
-      MYSQL_PASSWORD: backup_password
-      MYSQL_DATABASE: your_database
-      SCP_USER: remote_user
-      SCP_HOST: remote-vm-ip
-      SCP_PORT: 22
-      SCP_TARGET_DIR: /backups
-      BACKUP_CRON: "0 2 * * *" # every day at 02:00
-      RETAIN_DAYS: 7
+      MYSQL_HOST: ${MYSQL_HOST:-host.docker.internal}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydb}
+      SCP_USER: ${SCP_USER:-user}
+      SCP_HOST: ${SCP_HOST:-remote-vm}
+      SCP_PORT: ${SCP_PORT:-22}
+      SCP_TARGET_DIR: ${SCP_TARGET_DIR:-/backups}
+      BACKUP_CRON: ${BACKUP_CRON:-0 2 * * *}
+      RETAIN_DAYS: ${RETAIN_DAYS:-7}
+      TEAMS_WEBHOOK_URL: ${TEAMS_WEBHOOK_URL:-}
     volumes:
-      - ./backup.sh:/backup.sh:ro
-      - ./ssh:/root/.ssh:ro # mount your private key here
-      - backup_tmp:/tmp/backups
+      - ./backup.sh:/backup.sh
+      - ./ssh:/root/.ssh:ro
+      - ./data:/tmp/backups
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        apk add --no-cache mysql-client openssh-client dcron && \
-        chmod +x /backup.sh && \
-        echo "$$BACKUP_CRON /backup.sh >> /var/log/backup.log 2>&1" | crontab - && \
+        apk add --no-cache mysql-client openssh-client dcron curl && \
+        echo "$$BACKUP_CRON sh /backup.sh >> /var/log/backup.log 2>&1" | crontab - && \
         crond -f -l 2
 
-volumes:
-  backup_tmp:
+# exec in running container:
+# docker compose exec mysql-backup sh /backup.sh
+# docker exec mysql-backup /backup.sh
+# docker compose run --rm -T --entrypoint="" mysql-backup sh /backup.sh
